@@ -95,6 +95,7 @@ input[type="text"], input[type="email"], input[type="password"], input[type="num
 .rating-bar { display: flex; gap: 5px; margin: 10px 0; }
 .rating-btn { padding: 6px 10px; font-size: 12px; background: var(--bg); border: 1px solid var(--border); border-radius: 6px; }
 
+/* Komentar & Avatar Style */
 .comment-section { margin-top: 25px; border-top: 1px solid var(--border); padding-top: 15px; }
 .comment-card { background: var(--bg); padding: 12px; border-radius: 10px; margin-bottom: 10px; font-size: 13px; }
 .comment-header { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
@@ -441,7 +442,6 @@ async function fetchNovels() {
     }).join('');
 }
 
-// OPEN DETAIL: FIX VIEW COUNTER 1x PER SESI BROWSER
 async function openDetail(id) {
     const { data: { user } } = await db.auth.getUser();
     const { data, error } = await db.from('novels').select('*').eq('id', id).single();
@@ -601,7 +601,6 @@ function navigateChapter(direction) {
     }
 }
 
-// SISTEM KOMENTAR & BALASAN TANPA ERROR
 function prepareReply(commentId, authorName) {
     replyParentId = commentId;
     const targetDisplay = document.getElementById("replyTargetDisplay");
@@ -623,13 +622,17 @@ async function postComment() {
     if (!content.trim()) return showToast("Komentar tak boleh kosong!");
 
     const payload = {
-        chapter_id: activeChapter.id, 
+        novel_id: activeNovel ? activeNovel.id : null,
+        chapter_id: activeChapter ? activeChapter.id : null, 
         user_name: user.email.split("@")[0], 
         user_id: user.id, 
-        content: content,
-        profile_pic: currentUserAvatar || "https://via.placeholder.com/150",
-        parent_id: replyParentId ? replyParentId : null
+        content: content.trim(),
+        profile_pic: currentUserAvatar || "https://via.placeholder.com/150"
     };
+
+    if (replyParentId) {
+        payload.parent_id = replyParentId;
+    }
 
     const { error } = await db.from('comments').insert([payload]);
 
@@ -640,7 +643,7 @@ async function postComment() {
 
     document.getElementById("commentInput").value = "";
     cancelReply();
-    fetchComments(activeChapter.id);
+    if (activeChapter) fetchComments(activeChapter.id);
     showToast("Komentar terkirim!");
 }
 
