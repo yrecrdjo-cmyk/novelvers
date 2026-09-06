@@ -6,13 +6,7 @@
 <title>NovelVerse - Platform Novel Online</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-/* Reset Total Layout */
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-}
-
+* { box-sizing: border-box; margin: 0; padding: 0; }
 :root {
     --bg: #f8f9fa;
     --card: #ffffff;
@@ -22,9 +16,9 @@
     --primary-hover: #5b4bc4;
     --border: #e9ecef;
     --danger: #e74c3c;
+    --star: #f1c40f;
     --shadow: 0 4px 15px rgba(0,0,0,0.05);
 }
-
 body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
     background: var(--bg);
@@ -33,8 +27,6 @@ body {
     width: 100%;
     overflow-x: hidden;
 }
-
-/* Navbar */
 nav {
     height: 65px;
     background: var(--card);
@@ -47,173 +39,73 @@ nav {
     top: 0;
     z-index: 100;
 }
-
-.logo {
-    color: var(--primary);
-    font-size: 20px;
-    font-weight: 800;
-    cursor: pointer;
-}
-
-.nav-buttons {
-    display: flex;
-    gap: 6px;
-}
-
+.logo { color: var(--primary); font-size: 20px; font-weight: 800; cursor: pointer; }
+.nav-buttons { display: flex; gap: 6px; }
 button {
-    border: 0;
-    border-radius: 8px;
-    padding: 8px 12px;
-    cursor: pointer;
-    font-weight: 600;
-    font-size: 13px;
-    transition: .2s;
+    border: 0; border-radius: 8px; padding: 8px 12px; cursor: pointer;
+    font-weight: 600; font-size: 13px; transition: .2s;
 }
-
 button:active { transform: scale(0.98); }
 .primary { background: var(--primary); color: white; }
 .danger { background: var(--danger); color: white; }
 .secondary { background: var(--bg); color: var(--text); border: 1px solid var(--border); }
 
-/* Main Container - Paksa ke Tengah */
 main {
-    width: 100%;
-    max-width: 800px;
-    margin: 0 auto !important;
-    padding: 20px 15px;
-    display: block !important;
+    width: 100%; max-width: 800px; margin: 0 auto !important;
+    padding: 20px 15px; display: block !important;
 }
+.page { display: none; width: 100%; }
+.page.active { display: block; }
 
-.page {
-    display: none;
-    width: 100%;
-}
-
-.page.active {
-    display: block;
-}
-
-/* Search Bar Modern */
-.search-container {
-    position: relative;
-    margin-bottom: 20px;
-    width: 100%;
-}
-
-.search-icon {
-    position: absolute;
-    left: 15px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: var(--muted);
-}
-
+.search-container { position: relative; margin-bottom: 20px; width: 100%; }
+.search-icon { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: var(--muted); }
 .search-input {
-    width: 100%;
-    padding: 12px 15px 12px 40px;
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    background: var(--card);
-    font-size: 14px;
-    outline: none;
-    box-shadow: var(--shadow);
+    width: 100%; padding: 12px 15px 12px 40px; border: 1px solid var(--border);
+    border-radius: 10px; background: var(--card); font-size: 14px; outline: none; box-shadow: var(--shadow);
 }
+.search-input:focus { border-color: var(--primary); }
 
-.search-input:focus {
-    border-color: var(--primary);
-}
-
-/* Novel Grid - Vertikal Rapi Kiri ke Kanan */
 .novel-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-    gap: 15px;
-    width: 100%;
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 15px; width: 100%;
 }
-
 .novel-card {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    box-shadow: var(--shadow);
+    background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+    overflow: hidden; display: flex; flex-direction: column; box-shadow: var(--shadow);
+}
+.cover { width: 100%; aspect-ratio: 2/3; object-fit: cover; object-position: top center; background: #eee; }
+.novel-info { padding: 10px; display: flex; flex-direction: column; flex-grow: 1; }
+.novel-title { font-size: 13px; font-weight: bold; margin-bottom: 4px; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; }
+.meta-stats { font-size: 11px; color: var(--muted); display: flex; justify-content: space-between; margin-bottom: 6px; }
+
+.form-container, .auth-box, .reader, .profile-box, .detail-box {
+    width: 100%; max-width: 650px; margin: 0 auto; background: var(--card);
+    border: 1px solid var(--border); border-radius: 14px; padding: 20px; box-shadow: var(--shadow);
+}
+input[type="text"], input[type="email"], input[type="password"], input[type="number"], textarea, select {
+    width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 8px;
+    background: var(--card); color: var(--text); outline: none; margin-bottom: 12px; font-size: 14px;
 }
 
-.cover {
-    width: 100%;
-    aspect-ratio: 2/3;
-    object-fit: cover;
-    object-position: top center;
-    background: #eee;
+.chapter-list { margin-top: 15px; border-top: 1px solid var(--border); padding-top: 15px; }
+.chapter-item {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 10px; border: 1px solid var(--border); border-radius: 8px; margin-bottom: 8px; background: var(--bg);
 }
-
-.novel-info {
-    padding: 10px;
-    display: flex;
-    flex-direction: column;
-    flex-grow: 1;
-}
-
-.novel-title {
-    font-size: 13px;
-    font-weight: bold;
-    margin-bottom: 4px;
-    display: -webkit-box;
-    -webkit-line-clamp: 1;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-}
-
-.synopsis-preview {
-    font-size: 11px;
-    color: var(--muted);
-    margin-bottom: 8px;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-}
-
-/* Form Container */
-.form-container, .auth-box, .reader, .profile-box {
-    width: 100%;
-    max-width: 600px;
-    margin: 0 auto;
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    padding: 20px;
-    box-shadow: var(--shadow);
-}
-
-input[type="text"], input[type="email"], input[type="password"], textarea, select {
-    width: 100%;
-    padding: 12px;
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    background: var(--card);
-    color: var(--text);
-    outline: none;
-    margin-bottom: 12px;
-    font-size: 14px;
-}
+.chapter-nav { display: flex; justify-content: space-between; margin: 20px 0; }
+.rating-bar { display: flex; gap: 5px; margin: 10px 0; }
+.rating-btn { padding: 6px 10px; font-size: 12px; background: var(--bg); border: 1px solid var(--border); border-radius: 6px; }
+.rating-btn.active { background: var(--star); color: #000; font-weight: bold; border-color: var(--star); }
 
 .comment-section { margin-top: 25px; border-top: 1px solid var(--border); padding-top: 15px; }
 .comment-card { background: var(--bg); padding: 10px; border-radius: 8px; margin-bottom: 8px; font-size: 13px; }
+.tab-buttons { display: flex; gap: 8px; margin-bottom: 15px; }
+.tab-btn { flex: 1; padding: 8px; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; }
+.tab-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
 
 .toast {
-    position: fixed;
-    bottom: 25px;
-    left: 50%;
-    transform: translateX(-50%) translateY(100px);
-    background: #222;
-    color: white;
-    padding: 12px 20px;
-    border-radius: 8px;
-    transition: .3s;
-    z-index: 999;
+    position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%) translateY(100px);
+    background: #222; color: white; padding: 12px 20px; border-radius: 8px; transition: .3s; z-index: 999;
 }
 .toast.show { transform: translateX(-50%) translateY(0); }
 </style>
@@ -281,23 +173,69 @@ input[type="text"], input[type="email"], input[type="password"], textarea, selec
 
                 <label style="font-size:12px; color:var(--muted); display:block; margin-bottom:5px;">Sampul dari Galeri HP (Opsional):</label>
                 <input id="coverFile" type="file" accept="image/*">
-                <textarea id="content" placeholder="Tulis isi novel / bab cerita kamu di sini..." rows="10" required></textarea>
+                <textarea id="synopsis" placeholder="Sinopsis singkat novel..." rows="4" required></textarea>
                 <button type="submit" class="primary" style="width:100%">Simpan / Terbitkan</button>
+            </form>
+        </div>
+    </section>
+
+    <section id="detail" class="page">
+        <div class="detail-box">
+            <button class="secondary" onclick="showPage('home')">← Kembali</button><br><br>
+            <div style="display:flex; gap:15px; align-items:flex-start;">
+                <img id="dCover" style="width:110px; aspect-ratio:2/3; border-radius:8px; object-fit:cover;">
+                <div>
+                    <h2 id="dTitle"></h2>
+                    <p id="dMeta" style="color:var(--muted); font-size:12px; margin:5px 0;"></p>
+                    <div style="display:flex; gap:10px; margin-top:8px;">
+                        <button id="favBtn" class="secondary" onclick="toggleFavorite()">❤️ Favorit</button>
+                    </div>
+                </div>
+            </div><br>
+            <p id="dSynopsis" style="font-size:14px; line-height:1.6; color:var(--text);"></p><br>
+            
+            <div>
+                <h4>Beri Rating (1 - 10)</h4>
+                <div id="ratingContainer" class="rating-bar"></div>
+            </div>
+
+            <div class="chapter-list">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                    <h3>Daftar Chapter</h3>
+                    <button id="addChapterBtn" class="primary" style="display:none;" onclick="openChapterForm()">+ Tambah Bab</button>
+                </div>
+                <div id="chapterList"></div>
+            </div>
+        </div>
+    </section>
+
+    <section id="chapterForm" class="page">
+        <div class="form-container">
+            <h2>Tambah Bab Baru</h2><br>
+            <form onsubmit="handleSaveChapter(event)">
+                <input id="cNumber" type="number" placeholder="Nomor Bab (contoh: 1)" required>
+                <input id="cTitle" type="text" placeholder="Judul Bab (contoh: Kemunculan Pertama)" required>
+                <textarea id="cContent" placeholder="Isi cerita di bab ini..." rows="12" required></textarea>
+                <button type="submit" class="primary" style="width:100%">Simpan Bab</button>
             </form>
         </div>
     </section>
 
     <section id="reader" class="page">
         <div class="reader">
-            <button class="secondary" onclick="showPage('home')">← Kembali</button><br><br>
-            <h1 id="rTitle"></h1><br>
-            <p id="rMeta" style="color:var(--muted); font-size:13px;"></p><br><hr><br>
-            <div id="rContent" style="white-space:pre-wrap; line-height:1.8; font-size:15px;"></div>
+            <button class="secondary" onclick="showPage('detail')">← Kembali ke Detail Novel</button><br><br>
+            <h2 id="rChapterTitle"></h2><br><hr><br>
+            <div id="rContent" style="white-space:pre-wrap; line-height:1.8; font-size:16px;"></div>
+
+            <div class="chapter-nav">
+                <button id="prevChapterBtn" class="secondary" onclick="navigateChapter(-1)">← Bab Sebelumnya</button>
+                <button id="nextChapterBtn" class="primary" onclick="navigateChapter(1)">Bab Selanjutnya →</button>
+            </div>
 
             <div class="comment-section">
-                <h3>Komentar</h3><br>
+                <h3>Komentar Bab Ini</h3><br>
                 <div id="commentList"></div><br>
-                <textarea id="commentInput" placeholder="Tulis komentar kamu..." rows="3"></textarea>
+                <textarea id="commentInput" placeholder="Tulis komentar..." rows="3"></textarea>
                 <button class="primary" onclick="postComment()">Kirim Komentar</button>
             </div>
         </div>
@@ -306,10 +244,17 @@ input[type="text"], input[type="email"], input[type="password"], textarea, selec
     <section id="profile" class="page">
         <div class="profile-box">
             <h2>Profil Saya</h2>
-            <p id="userEmailDisplay" style="color:var(--muted); margin:10px 0 20px;">Belum login</p>
-            <hr><br>
-            <h3 style="margin-bottom:15px;">Novel Karya Saya</h3>
-            <div id="myNovelGrid" class="novel-grid"></div>
+            <p id="userEmailDisplay" style="color:var(--muted); margin:10px 0 15px;">Belum login</p>
+
+            <div class="tab-buttons">
+                <button class="tab-btn active" onclick="switchProfileTab('my')">Karya Saya</button>
+                <button class="tab-btn" onclick="switchProfileTab('fav')">Favorit Saya</button>
+                <button class="tab-btn" onclick="switchProfileTab('history')">Riwayat Baca</button>
+            </div>
+
+            <div id="tabMyNovels" class="novel-grid"></div>
+            <div id="tabFavNovels" class="novel-grid" style="display:none;"></div>
+            <div id="tabHistory" style="display:none;"></div>
         </div>
     </section>
 </main>
@@ -321,11 +266,14 @@ const SUPABASE_KEY = "sb_publishable_42a75XiJ9WErGbNz6ZgpzQ_dGX8bvQJ";
 const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 let isRegister = false;
-let activeNovelId = null;
+let activeNovel = null;
+let activeChapter = null;
+let currentChapterList = [];
 
 document.addEventListener("DOMContentLoaded", () => {
     checkUser();
     fetchNovels();
+    renderRatingBar();
 });
 
 function showToast(msg) {
@@ -383,19 +331,18 @@ function openPublishPage() {
     document.getElementById("formTitle").textContent = "Publish Novel Baru";
     document.getElementById("title").value = "";
     document.getElementById("genre").value = "";
-    document.getElementById("content").value = "";
+    document.getElementById("synopsis").value = "";
     showPage("publish");
 }
 
 async function handlePublish(e) {
     e.preventDefault();
     const { data: { user } } = await db.auth.getUser();
-    if (!user) return showToast("Wajib login terlebih dahulu!");
+    if (!user) return showToast("Wajib login dulu!");
 
-    const editId = document.getElementById("editId").value;
     const title = document.getElementById("title").value;
     const genre = document.getElementById("genre").value;
-    const content = document.getElementById("content").value;
+    const synopsis = document.getElementById("synopsis").value;
     const fileInput = document.getElementById("coverFile");
 
     let coverUrl = "https://images.unsplash.com/photo-1543002588-bfa74002ed7e";
@@ -403,26 +350,18 @@ async function handlePublish(e) {
     if (fileInput.files.length > 0) {
         const file = fileInput.files[0];
         const fileName = `${Date.now()}_${file.name}`;
-        const { data, error } = await db.storage.from('covers').upload(fileName, file);
+        const { error } = await db.storage.from('covers').upload(fileName, file);
         if (error) return showToast("Gagal upload gambar: " + error.message);
         const { data: urlData } = db.storage.from('covers').getPublicUrl(fileName);
         coverUrl = urlData.publicUrl;
     }
 
-    if (editId) {
-        const updateData = { title, genre, content };
-        if(fileInput.files.length > 0) updateData.cover = coverUrl;
-        const { error } = await db.from('novels').update(updateData).eq('id', editId);
-        if (error) return showToast("Gagal update: " + error.message);
-        showToast("Novel berhasil diperbarui!");
-    } else {
-        const { error } = await db.from('novels').insert([
-            { title, genre, cover: coverUrl, content, author: user.email.split("@")[0], author_id: user.id }
-        ]);
-        if (error) return showToast("Gagal publish: " + error.message);
-        showToast("Novel Berhasil Terbit Online!");
-    }
+    const { error } = await db.from('novels').insert([
+        { title, genre, cover: coverUrl, synopsis, author: user.email.split("@")[0], author_id: user.id }
+    ]);
+    if (error) return showToast("Gagal publish: " + error.message);
 
+    showToast("Novel Berhasil Terbit!");
     fetchNovels(); showPage("home");
 }
 
@@ -433,53 +372,195 @@ async function fetchNovels() {
     const filtered = (data || []).filter(n => n.title.toLowerCase().includes(search));
 
     if (filtered.length === 0) {
-        grid.innerHTML = '<p style="grid-column:1/-1; text-align:center; color:var(--muted); padding:30px 0;">Belum ada novel yang dipublish.</p>';
+        grid.innerHTML = '<p style="grid-column:1/-1; text-align:center; color:var(--muted); padding:30px 0;">Belum ada novel.</p>';
         return;
     }
 
-    grid.innerHTML = filtered.map(n => `
-        <div class="novel-card">
-            <img class="cover" src="${n.cover}">
-            <div class="novel-info">
-                <div class="novel-title">${n.title}</div>
-                <div class="synopsis-preview">${n.content}</div>
-                <small style="font-size:11px; color:var(--primary); font-weight:bold;">By: ${n.author}</small>
-                <small style="font-size:10px; color:var(--muted); display:block; margin-bottom:8px;">${n.genre}</small>
-                <button class="primary" style="width:100%; padding:6px; font-size:12px; margin-top:auto;" onclick="readNovel('${n.id}')">Baca</button>
+    grid.innerHTML = filtered.map(n => {
+        const avgRating = n.rating_count ? (n.rating_sum / n.rating_count).toFixed(1) : "0.0";
+        return `
+            <div class="novel-card" onclick="openDetail('${n.id}')">
+                <img class="cover" src="${n.cover}">
+                <div class="novel-info">
+                    <div class="novel-title">${n.title}</div>
+                    <div class="meta-stats">
+                        <span>⭐ ${avgRating}</span>
+                        <span>👁️ ${n.views || 0}</span>
+                    </div>
+                    <small style="font-size:10px; color:var(--muted); display:block;">${n.genre}</small>
+                </div>
             </div>
+        `;
+    }).join('');
+}
+
+async function openDetail(id) {
+    const { data: { user } } = await db.auth.getUser();
+    const { data } = await db.from('novels').select('*').eq('id', id).single();
+    if (!data) return;
+
+    activeNovel = data;
+
+    // Incremental Views Counter
+    await db.from('novels').update({ views: (data.views || 0) + 1 }).eq('id', id);
+
+    const avgRating = data.rating_count ? (data.rating_sum / data.rating_count).toFixed(1) : "0.0";
+    document.getElementById("dCover").src = data.cover;
+    document.getElementById("dTitle").textContent = data.title;
+    document.getElementById("dMeta").textContent = `By: ${data.author} | Genre: ${data.genre} | ⭐ ${avgRating} | 👁️ ${data.views || 0} Views`;
+    document.getElementById("dSynopsis").textContent = data.synopsis;
+
+    document.getElementById("addChapterBtn").style.display = (user && user.id === data.author_id) ? "block" : "none";
+
+    checkFavoriteStatus();
+    loadChapters(id);
+    showPage("detail");
+}
+
+function renderRatingBar() {
+    const box = document.getElementById("ratingContainer");
+    box.innerHTML = [1,2,3,4,5,6,7,8,9,10].map(n => `
+        <button class="rating-btn" onclick="submitRating(${n})">${n}</button>
+    `).join('');
+}
+
+async function submitRating(score) {
+    const { data: { user } } = await db.auth.getUser();
+    if (!user) return showToast("Login dulu untuk beri rating!");
+
+    const { data: existing } = await db.from('ratings').select('*').eq('novel_id', activeNovel.id).eq('user_id', user.id).single();
+    if (existing) return showToast("Kamu sudah memberi rating novel ini!");
+
+    await db.from('ratings').insert([{ user_id: user.id, novel_id: activeNovel.id, score }]);
+    
+    const newSum = (activeNovel.rating_sum || 0) + score;
+    const newCount = (activeNovel.rating_count || 0) + 1;
+    await db.from('novels').update({ rating_sum: newSum, rating_count: newCount }).eq('id', activeNovel.id);
+
+    showToast("Terima kasih atas ratingmu!");
+    openDetail(activeNovel.id);
+}
+
+async function checkFavoriteStatus() {
+    const { data: { user } } = await db.auth.getUser();
+    if (!user) return;
+    const { data } = await db.from('favorites').select('*').eq('novel_id', activeNovel.id).eq('user_id', user.id).single();
+    const btn = document.getElementById("favBtn");
+    if (data) {
+        btn.textContent = "❤️ Ditinggalkan dari Favorit";
+        btn.classList.add("primary");
+    } else {
+        btn.textContent = "❤️ Favoritkan";
+        btn.classList.remove("primary");
+    }
+}
+
+async function toggleFavorite() {
+    const { data: { user } } = await db.auth.getUser();
+    if (!user) return showToast("Login dulu!");
+
+    const { data } = await db.from('favorites').select('*').eq('novel_id', activeNovel.id).eq('user_id', user.id).single();
+    if (data) {
+        await db.from('favorites').delete().eq('id', data.id);
+        showToast("Dihapus dari favorit");
+    } else {
+        await db.from('favorites').insert([{ user_id: user.id, novel_id: activeNovel.id }]);
+        showToast("Ditambahkan ke favorit!");
+    }
+    checkFavoriteStatus();
+}
+
+async function loadChapters(novelId) {
+    const { data } = await db.from('chapters').select('*').eq('novel_id', novelId).order('chapter_number', { ascending: true });
+    currentChapterList = data || [];
+    const box = document.getElementById("chapterList");
+
+    if (currentChapterList.length === 0) {
+        box.innerHTML = '<p style="color:var(--muted); font-size:13px;">Belum ada bab rilis.</p>';
+        return;
+    }
+
+    box.innerHTML = currentChapterList.map(c => `
+        <div class="chapter-item" onclick="readChapter('${c.id}')">
+            <div>
+                <b>Bab ${c.chapter_number}: ${c.title}</b>
+            </div>
+            <button class="secondary" style="font-size:11px;">Baca</button>
         </div>
     `).join('');
 }
 
-async function readNovel(id) {
-    activeNovelId = id;
-    const { data } = await db.from('novels').select('*').eq('id', id).single();
-    if (!data) return;
+function openChapterForm() {
+    document.getElementById("cNumber").value = currentChapterList.length + 1;
+    document.getElementById("cTitle").value = "";
+    document.getElementById("cContent").value = "";
+    showPage("chapterForm");
+}
 
-    document.getElementById("rTitle").textContent = data.title;
-    document.getElementById("rMeta").textContent = `Genre: ${data.genre} | Penulis: ${data.author}`;
-    document.getElementById("rContent").textContent = data.content;
+async function handleSaveChapter(e) {
+    e.preventDefault();
+    const chapter_number = parseInt(document.getElementById("cNumber").value);
+    const title = document.getElementById("cTitle").value;
+    const content = document.getElementById("cContent").value;
+
+    const { error } = await db.from('chapters').insert([
+        { novel_id: activeNovel.id, chapter_number, title, content }
+    ]);
+
+    if (error) return showToast("Gagal simpan bab!");
+    showToast("Bab baru berhasil dirilis!");
+    openDetail(activeNovel.id);
+}
+
+async function readChapter(chapterId) {
+    const { data: { user } } = await db.auth.getUser();
+    const chap = currentChapterList.find(c => c.id === chapterId);
+    if (!chap) return;
+
+    activeChapter = chap;
+    document.getElementById("rChapterTitle").textContent = `Bab ${chap.chapter_number}: ${chap.title}`;
+    document.getElementById("rContent").textContent = chap.content;
+
+    // Catat Riwayat Baca
+    if (user) {
+        await db.from('reading_history').upsert({
+            user_id: user.id,
+            novel_id: activeNovel.id,
+            chapter_id: chap.id,
+            updated_at: new Date()
+        }, { onConflict: 'user_id, novel_id' });
+    }
+
     showPage("reader");
-    fetchComments(id);
+    fetchComments(chap.id);
+}
+
+function navigateChapter(direction) {
+    const currentIndex = currentChapterList.findIndex(c => c.id === activeChapter.id);
+    const newIndex = currentIndex + direction;
+    if (newIndex >= 0 && newIndex < currentChapterList.length) {
+        readChapter(currentChapterList[newIndex].id);
+    } else {
+        showToast("Bab tidak tersedia.");
+    }
 }
 
 async function postComment() {
     const { data: { user } } = await db.auth.getUser();
-    if (!user) return showToast("Login dulu untuk komentar!");
+    if (!user) return showToast("Login dulu!");
     const content = document.getElementById("commentInput").value;
-    if (!content) return showToast("Isi komentar tidak boleh kosong!");
+    if (!content) return showToast("Komentar tak boleh kosong!");
 
-    const { error } = await db.from('comments').insert([
-        { novel_id: activeNovelId, user_name: user.email.split("@")[0], user_id: user.id, content }
+    await db.from('comments').insert([
+        { chapter_id: activeChapter.id, user_name: user.email.split("@")[0], user_id: user.id, content }
     ]);
 
-    if (error) return showToast("Gagal kirim komentar");
     document.getElementById("commentInput").value = "";
-    fetchComments(activeNovelId);
+    fetchComments(activeChapter.id);
 }
 
-async function fetchComments(novelId) {
-    const { data } = await db.from('comments').select('*').eq('novel_id', novelId).order('created_at', { ascending: true });
+async function fetchComments(chapterId) {
+    const { data } = await db.from('comments').select('*').eq('chapter_id', chapterId).order('created_at', { ascending: true });
     const list = document.getElementById("commentList");
     list.innerHTML = (data || []).map(c => `
         <div class="comment-card">
@@ -489,57 +570,56 @@ async function fetchComments(novelId) {
     `).join('');
 }
 
+function switchProfileTab(tab) {
+    document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+    event.target.classList.add("active");
+
+    document.getElementById("tabMyNovels").style.display = tab === 'my' ? 'grid' : 'none';
+    document.getElementById("tabFavNovels").style.display = tab === 'fav' ? 'grid' : 'none';
+    document.getElementById("tabHistory").style.display = tab === 'history' ? 'block' : 'none';
+}
+
 async function loadProfile() {
     const { data: { user } } = await db.auth.getUser();
     const display = document.getElementById("userEmailDisplay");
-    const myGrid = document.getElementById("myNovelGrid");
-
-    if (!user) {
-        display.textContent = "Belum Login";
-        myGrid.innerHTML = "<p>Silakan login untuk melihat novel milikmu.</p>";
-        return;
-    }
-
+    if (!user) { display.textContent = "Belum Login"; return; }
     display.textContent = `Email: ${user.email}`;
-    const { data } = await db.from('novels').select('*').eq('author_id', user.id);
 
-    if (!data || data.length === 0) {
-        myGrid.innerHTML = "<p style='grid-column:1/-1; color:var(--muted);'>Kamu belum mempublikasikan novel apapun.</p>";
-        return;
-    }
-
-    myGrid.innerHTML = data.map(n => `
-        <div class="novel-card">
+    // Karya Saya
+    const { data: myNovels } = await db.from('novels').select('*').eq('author_id', user.id);
+    document.getElementById("tabMyNovels").innerHTML = (myNovels || []).map(n => `
+        <div class="novel-card" onclick="openDetail('${n.id}')">
             <img class="cover" src="${n.cover}">
             <div class="novel-info">
-                <div class="novel-title">${n.title}</div><br>
-                <button class="secondary" style="padding:5px; margin-bottom:5px; font-size:12px;" onclick="editNovel('${n.id}')">Edit</button>
-                <button class="danger" style="padding:5px; font-size:12px;" onclick="deleteNovel('${n.id}')">Hapus</button>
+                <div class="novel-title">${n.title}</div>
             </div>
         </div>
-    `).join('');
-}
+    `).join('') || '<p style="grid-column:1/-1;">Belum ada karya.</p>';
 
-async function editNovel(id) {
-    const { data } = await db.from('novels').select('*').eq('id', id).single();
-    if (!data) return;
+    // Favorit Saya
+    const { data: favs } = await db.from('favorites').select('novel_id, novels(*)').eq('user_id', user.id);
+    document.getElementById("tabFavNovels").innerHTML = (favs || []).map(f => `
+        <div class="novel-card" onclick="openDetail('${f.novels.id}')">
+            <img class="cover" src="${f.novels.cover}">
+            <div class="novel-info">
+                <div class="novel-title">${f.novels.title}</div>
+            </div>
+        </div>
+    `).join('') || '<p style="grid-column:1/-1;">Belum ada novel favorit.</p>';
 
-    document.getElementById("editId").value = data.id;
-    document.getElementById("title").value = data.title;
-    document.getElementById("genre").value = data.genre;
-    document.getElementById("content").value = data.content;
-    document.getElementById("formTitle").textContent = "Edit Novel";
-    showPage("publish");
-}
-
-async function deleteNovel(id) {
-    if (!confirm("Yakin ingin menghapus novel ini?")) return;
-    const { error } = await db.from('novels').delete().eq('id', id);
-    if (error) return showToast("Gagal menghapus");
-    showToast("Novel berhasil dihapus!");
-    loadProfile(); fetchNovels();
+    // Riwayat Baca
+    const { data: history } = await db.from('reading_history').select('*, novels(*), chapters(*)').eq('user_id', user.id);
+    document.getElementById("tabHistory").innerHTML = (history || []).map(h => `
+        <div class="chapter-item">
+            <div>
+                <b>${h.novels.title}</b><br>
+                <small style="color:var(--muted);">Terakhir dibaca: Bab ${h.chapters.chapter_number}</small>
+            </div>
+            <button class="primary" onclick="openDetail('${h.novels.id}')">Lanjut</button>
+        </div>
+    `).join('') || '<p>Belum ada riwayat baca.</p>';
 }
 </script>
 </body>
-</html>
-
+    </html>
+    
