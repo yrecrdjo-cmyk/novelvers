@@ -95,7 +95,6 @@ input[type="text"], input[type="email"], input[type="password"], input[type="num
 .rating-bar { display: flex; gap: 5px; margin: 10px 0; }
 .rating-btn { padding: 6px 10px; font-size: 12px; background: var(--bg); border: 1px solid var(--border); border-radius: 6px; }
 
-/* Komentar & Avatar Style */
 .comment-section { margin-top: 25px; border-top: 1px solid var(--border); padding-top: 15px; }
 .comment-card { background: var(--bg); padding: 12px; border-radius: 10px; margin-bottom: 10px; font-size: 13px; }
 .comment-header { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
@@ -442,7 +441,7 @@ async function fetchNovels() {
     }).join('');
 }
 
-// OPEN DETAIL: FIX VIEW COUNTER (HANYA 1x PER SESI)
+// OPEN DETAIL: FIX VIEW COUNTER 1x PER SESI BROWSER
 async function openDetail(id) {
     const { data: { user } } = await db.auth.getUser();
     const { data, error } = await db.from('novels').select('*').eq('id', id).single();
@@ -450,7 +449,6 @@ async function openDetail(id) {
 
     activeNovel = data;
 
-    // View hanya bertambah 1x per sesi browser
     const sessionKey = `viewed_novel_${id}`;
     if (!sessionStorage.getItem(sessionKey)) {
         const currentViews = (data.views || 0) + 1;
@@ -603,7 +601,7 @@ function navigateChapter(direction) {
     }
 }
 
-// BALAS KOMENTAR & AVATAR
+// SISTEM KOMENTAR & BALASAN TANPA ERROR
 function prepareReply(commentId, authorName) {
     replyParentId = commentId;
     const targetDisplay = document.getElementById("replyTargetDisplay");
@@ -620,25 +618,30 @@ function cancelReply() {
 async function postComment() {
     const { data: { user } } = await db.auth.getUser();
     if (!user) return showToast("Login dulu untuk komentar!");
+    
     const content = document.getElementById("commentInput").value;
-    if (!content) return showToast("Komentar tak boleh kosong!");
+    if (!content.trim()) return showToast("Komentar tak boleh kosong!");
 
-    const { error } = await db.from('comments').insert([
-        { 
-            chapter_id: activeChapter.id, 
-            user_name: user.email.split("@")[0], 
-            user_id: user.id, 
-            content: content,
-            profile_pic: currentUserAvatar,
-            parent_id: replyParentId
-        }
-    ]);
+    const payload = {
+        chapter_id: activeChapter.id, 
+        user_name: user.email.split("@")[0], 
+        user_id: user.id, 
+        content: content,
+        profile_pic: currentUserAvatar || "https://via.placeholder.com/150",
+        parent_id: replyParentId ? replyParentId : null
+    };
 
-    if (error) return showToast("Gagal kirim komentar!");
+    const { error } = await db.from('comments').insert([payload]);
+
+    if (error) {
+        console.error("Error comment:", error);
+        return showToast("Gagal kirim komentar: " + error.message);
+    }
 
     document.getElementById("commentInput").value = "";
     cancelReply();
     fetchComments(activeChapter.id);
+    showToast("Komentar terkirim!");
 }
 
 async function fetchComments(chapterId) {
@@ -739,3 +742,4 @@ async function loadProfile() {
 </script>
 </body>
 </html>
+    
